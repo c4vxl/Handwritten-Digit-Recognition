@@ -9,12 +9,14 @@ from sklearn.model_selection import train_test_split
 # training args
 DATASET_FILE = "dataset.json"   # path to dataset
 TRAIN_TEST_SPLIT_SIZE = 0.2     # 20% of the dataset for validation, 80% for training
-LEARNING_RATE = 0.01            # amount the weights should be ajusted over each epoch
-N_EPOCHS = 200                  # number of iterations over the dataset
+LEARNING_RATE = 0.005            # amount the weights should be ajusted over each epoch
+N_EPOCHS = 50000                  # number of iterations over the dataset
 LOSS_LOGGING_RATE = 20          # log loss all 20 epochs
 
 # initialize model
 model = SimpleNeuralNetwork(n_inp=8064, n_out=10) # a 84x96 pixel image has 8064 pixels and there are 10 numbers to predict
+
+model.load_state_dict(torch.load("model.pth"))
 
 # load dataset
 with open(DATASET_FILE, "r") as file:
@@ -45,20 +47,22 @@ criterion = nn.CrossEntropyLoss()
 optimizer = Adam(model.parameters(), lr=LEARNING_RATE)
 
 # training loop
-for epoch in range(0, N_EPOCHS):
-    pred_Y = model(X_train) # make prediction
-    
-    loss = criterion(pred_Y, y_train) # calculate loss between prediction and expected
+try:
+    for epoch in range(0, N_EPOCHS):
+        pred_Y = model(X_train) # make prediction
 
-    # log loss
-    if epoch % LOSS_LOGGING_RATE == 0:
-        print(f"Epoch: {epoch}/{N_EPOCHS}; Loss: {loss}")
+        loss = criterion(pred_Y, y_train) # calculate loss between prediction and expected
 
-    # do backpropagation
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
+        # log loss
+        if epoch % LOSS_LOGGING_RATE == 0:
+            print(f"Epoch: {epoch}/{N_EPOCHS}; Loss: {loss}")
 
+        # do backpropagation
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+except KeyboardInterrupt:
+    print("Detected Keyboard Interrupt! Stopping training...")
 
 # Evaluate model on test split
 with torch.no_grad():
