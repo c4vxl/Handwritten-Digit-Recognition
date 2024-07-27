@@ -66,15 +66,12 @@ class DrawingApp:
         # Rescale image if necessary
         image = image.resize((self.canvas_width, self.canvas_height), Image.ANTIALIAS)
         
-        pixel_cds = [(x, y) for y in range(image.height) for x in range(image.width)]
-        # Get pixel values
-        pixels = [image.getpixel(x) for x in pixel_cds]
         # Convert pixel values to binary (1 if R value <= 200, otherwise 0)
-        pixels = [1 if x[0] <= 200 else 0 for x in pixels]
-        # Split pixels into 96 rows of 84 pixels each
-        pixels = [pixels[84*i:84*(i+1)] for i in range(96)]
+        pixels = [1 if x[0] <= 200 else 0 for x in image.getdata()]
         
-        prop, prop_map, pred = prompt_model(pixels)
+        prop, prop_map, pred = prompt_model(pixels, width=self.canvas_width, height=self.canvas_height)
+
+        print(prop_map)
 
         # Update the probability labels
         for i in range(10):
