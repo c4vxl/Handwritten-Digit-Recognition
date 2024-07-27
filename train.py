@@ -1,4 +1,5 @@
 import json
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -9,14 +10,14 @@ from sklearn.model_selection import train_test_split
 # training args
 DATASET_FILE = "dataset.json"   # path to dataset
 TRAIN_TEST_SPLIT_SIZE = 0.2     # 20% of the dataset for validation, 80% for training
-LEARNING_RATE = 0.005            # amount the weights should be ajusted over each epoch
-N_EPOCHS = 50000                  # number of iterations over the dataset
+LEARNING_RATE = 0.005           # amount the weights should be ajusted over each epoch
+N_EPOCHS = 50000                # number of iterations over the dataset
 LOSS_LOGGING_RATE = 20          # log loss all 20 epochs
 
 # initialize model
 model = SimpleNeuralNetwork(n_inp=8064, n_out=10) # a 84x96 pixel image has 8064 pixels and there are 10 numbers to predict
 
-model.load_state_dict(torch.load("model.pth"))
+if (os.path.exists("model.pth")): model.load_state_dict(torch.load("model.pth"))
 
 # load dataset
 with open(DATASET_FILE, "r") as file:
