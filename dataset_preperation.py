@@ -2,7 +2,7 @@
 This script is written for this dataset:
    https://github.com/kensanata/numbers/tree/master/0002_CH5M
 
-Download the folder and rename it to "numbers".
+Download the folder and rename it to "data".
 """
 
 
